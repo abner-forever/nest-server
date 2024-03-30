@@ -1,4 +1,66 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ArticleService } from './article.service';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { UpdateArticleDto } from './dto/update-article.dto';
+import { Public } from 'src/decorator/auth.decorator';
 
 @Controller('article')
-export class ArticleController {}
+export class ArticleController {
+  constructor(private readonly articleService: ArticleService) {}
+
+  @Public()
+  @Get('list')
+  async getArticleList(
+    @Query('pageNum') pageNum: number = 1, // 默认页码为 1
+    @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
+  ) {
+    return this.articleService.getArticleList({ pageNum, pageSize }); // 调用文章服务的 findWithPagination 方法进行分页查询
+  }
+  @Public()
+  @Get('deatil/:id')
+  async getArticleDetail(@Param('id') id: string) {
+    console.log('getArticleDetail');
+    return this.articleService.findById(+id);
+  }
+  @Get('myarticleList')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getArticleListByUser(
+    @Req() req,
+    @Query('pageNum') pageNum: number = 1, // 默认页码为 1
+    @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
+  ) {
+    return this.articleService.getArticleList({
+      pageNum,
+      pageSize,
+      userId: req.user.userId,
+    });
+  }
+  @Post('add')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async addArticle(@Req() req, @Body() article: CreateArticleDto) {
+    return this.articleService.create({
+      ...article,
+      author_id: req.user.userId,
+    });
+  }
+  @Post('update')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async updateArticle(@Body() article: UpdateArticleDto) {
+    return this.articleService.update(article);
+  }
+  @Post('delete')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async deleteArticle(@Body() { id }) {
+    return this.articleService.delete(id);
+  }
+}

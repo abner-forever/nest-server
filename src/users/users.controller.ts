@@ -33,10 +33,10 @@ export class UsersController {
     response.cookie('key', 'value');
     return this.usersService.create(createUserDto);
   }
-  @Get('userinfo')
+  @Get('userInfo')
   @UseInterceptors(ClassSerializerInterceptor)
   async getUserInfo(@Req() req): Promise<UserEntity> {
-    const userData = await this.usersService.findById(req.user.id);
+    const userData = await this.usersService.findById(req.user.userId);
     const userInfo = convertKeysToCamelCase({
       ...userData.toJSON(),
       expired: req?.user?.exp,

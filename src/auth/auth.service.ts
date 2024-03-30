@@ -22,7 +22,7 @@ export class AuthService {
     if (user?.password !== hashPassword(pass, salt)) {
       throw new UnauthorizedException({ message: '用户名或密码错误' });
     }
-    const payload = { id: user.id, username: user.username };
+    const payload = { userId: user.id, username: user.username };
     return {
       ...payload,
       token: await this.jwtService.signAsync(payload),

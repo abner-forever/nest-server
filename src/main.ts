@@ -4,11 +4,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 // import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 
 declare const module: any;
 
 async function main() {
   const app = await NestFactory.create(AppModule);
+  // 设置请求体大小限制为 10MB
+  app.use(bodyParser.json({ limit: '10mb' }));
+  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
   app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
