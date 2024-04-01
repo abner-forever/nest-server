@@ -17,7 +17,7 @@ async function main() {
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
+    .setTitle('Blog APIS')
     .setDescription('The cats API description')
     .setVersion('1.0')
     .addTag('cats')

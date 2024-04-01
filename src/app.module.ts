@@ -18,18 +18,20 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './users/model/user.model';
 import { ConfigModule } from '@nestjs/config';
 import { UsersController } from './users/users.controller';
-import { FileService } from './file/file.service';
-import { FileController } from './file/file.controller';
-import { FileModule } from './file/file.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
 import { AuthService } from './auth/auth.service';
 import { RolesGuard } from './guard/roles.guard';
 import { ArticleModule } from './article/article.module';
+import { HttpModule } from '@nestjs/axios';
+import { ScheduleModule } from '@nestjs/schedule';
+import { FileModule } from './file/file.module';
+import { TaskModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -46,22 +48,25 @@ import { ArticleModule } from './article/article.module';
       synchronize: true, // 设置 synchronize: true 不能被用于生产环境，否则您可能会丢失生产环境数据
     }),
     UsersModule,
-    FileModule,
     AuthModule,
+    FileModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '30d' },
     }),
     ArticleModule,
+    ScheduleModule.forRoot(),
+    TaskModule,
   ],
-  controllers: [AppController, FileController],
+  controllers: [AppController],
   providers: [
+    AuthService,
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
-    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
@@ -74,8 +79,6 @@ import { ArticleModule } from './article/article.module';
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
-    FileService,
-    AuthService,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

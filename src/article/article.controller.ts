@@ -24,7 +24,10 @@ export class ArticleController {
     @Query('pageNum') pageNum: number = 1, // 默认页码为 1
     @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
   ) {
-    return this.articleService.getArticleList({ pageNum, pageSize }); // 调用文章服务的 findWithPagination 方法进行分页查询
+    return this.articleService.getArticleList({
+      pageNum: +pageNum,
+      pageSize: +pageSize,
+    }); // 调用文章服务的 findWithPagination 方法进行分页查询
   }
   @Public()
   @Get('deatil/:id')
@@ -40,8 +43,8 @@ export class ArticleController {
     @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
   ) {
     return this.articleService.getArticleList({
-      pageNum,
-      pageSize,
+      pageNum: +pageNum,
+      pageSize: +pageSize,
       userId: req.user.userId,
     });
   }

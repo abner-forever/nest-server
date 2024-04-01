@@ -22,10 +22,10 @@ export class Article extends Model<Article> {
   @BelongsTo(() => User)
   user: User;
 
-  @Column
+  @Column({ type: DataType.TEXT, defaultValue: '未命名文章' })
   title: string;
 
-  @Column
+  @Column(DataType.TEXT) // 使用 TEXT 类型
   description: string;
 
   @Column(DataType.TEXT) // 使用 TEXT 类型

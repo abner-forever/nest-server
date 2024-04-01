@@ -6,8 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  ClassSerializerInterceptor,
-  UseInterceptors,
   Res,
   Req,
 } from '@nestjs/common';
@@ -18,8 +16,6 @@ import { UserEntity } from './entities/user.entity';
 import { Response } from 'express';
 import { Roles } from 'src/decorator/roles.decorator';
 import { Role } from 'src/enums/role.enum';
-import { convertKeysToCamelCase } from 'src/utils';
-// import { Public } from 'src/decorator/auth.decorator';
 
 @Controller('user')
 export class UsersController {
@@ -33,14 +29,14 @@ export class UsersController {
     response.cookie('key', 'value');
     return this.usersService.create(createUserDto);
   }
+
   @Get('userInfo')
-  @UseInterceptors(ClassSerializerInterceptor)
   async getUserInfo(@Req() req): Promise<UserEntity> {
     const userData = await this.usersService.findById(req.user.userId);
-    const userInfo = convertKeysToCamelCase({
+    const userInfo = {
       ...userData.toJSON(),
       expired: req?.user?.exp,
-    });
+    };
     return new UserEntity(userInfo);
   }
 

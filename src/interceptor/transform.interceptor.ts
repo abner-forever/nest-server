@@ -7,6 +7,7 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UnauthorizedException } from '@nestjs/common';
+import { convertKeysToCamelCase } from 'src/utils';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, any> {
@@ -15,7 +16,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
       map((data) => ({
         code: 0, // 成功状态码
         message: 'success', // 成功消息
-        data: this.serializeData(data), // 序列化数据
+        data: convertKeysToCamelCase(this.serializeData(data)), // 序列化数据
       })),
       catchError((error) => {
         if (error instanceof UnauthorizedException) {

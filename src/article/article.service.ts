@@ -38,31 +38,41 @@ export class ArticleService {
     }
     // 关联查询用户表，并获取关联的用户名信息
     options.include = [{ model: User, attributes: ['username'] }];
-    // 执行查询
     const { count, rows } = await this.articleModel.findAndCountAll(options); // 查询总文章数和当前页文章列表
 
-    const currentPage = pageNum; // 当前页码
     const totalPages = Math.ceil(count / pageSize); // 总页数
-    const hasNextPage = currentPage < totalPages; // 是否有下一页
+    const hasNextPage = pageNum < totalPages; // 是否有下一页
     // 将嵌套结构展平
     const list = rows.map((article) => ({
       ...article.toJSON(),
       author: article.user.username, // 将作者信息从嵌套结构中提取出来
+      user: undefined,
     }));
-    return { list, currentPage, totalPages, hasNextPage }; // 返回带有页码相关信息的响应数据
+    return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count }; // 返回带有页码相关信息的响应数据
   }
 
   // 根据id查询文章
-  findById(id: number) {
-    return this.articleModel.findOne({
+  async findById(id: number) {
+    // 构建查询选项
+
+    // 关联查询用户表，并获取关联的用户名信息
+    const data = await this.articleModel.findOne({
       where: {
         id,
       },
+      include: { model: User, attributes: ['username'] },
     });
+    return {
+      ...data.toJSON(),
+      user: undefined,
+      author: data.user.username,
+    };
   }
   async create(createUserDto: CreateArticleDto) {
-    await this.articleModel.create(createUserDto);
-    return null;
+    const res = await this.articleModel.create(createUserDto);
+    return {
+      id: res.dataValues.id,
+    };
   }
   async update(updateArticleDto: UpdateArticleDto) {
     await this.articleModel.update(updateArticleDto, {
