@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UnauthorizedException } from '@nestjs/common';
 import { convertKeysToCamelCase } from 'src/utils';
@@ -16,18 +16,22 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
       map((data) => ({
         code: 0, // 成功状态码
         message: 'success', // 成功消息
+        success: true,
         data: convertKeysToCamelCase(this.serializeData(data)), // 序列化数据
       })),
       catchError((error) => {
+        console.log('catchError', error.message);
         if (error instanceof UnauthorizedException) {
           return of({
             code: 401,
+            success: false,
             message: error.message,
             data: null,
           });
         } else {
-          return throwError({
-            code: 500,
+          return of({
+            code: error.code || 500,
+            success: false,
             message: error.message || 'Internal Server Error',
             data: null,
           });
