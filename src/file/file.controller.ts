@@ -7,6 +7,7 @@ import {
   Param,
   Res,
   Logger,
+  NotAcceptableException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorator/auth.decorator';
@@ -15,20 +16,27 @@ import { join } from 'path';
 import { Response } from 'express';
 import { FileService } from './file.service';
 import * as fs from 'fs';
+
+const tempDir = './uploads/temp'; // 临时文件夹
 @Controller({ path: 'files' })
 export class FileController {
   private readonly logger = new Logger(FileController.name);
-  constructor(private readonly fileService: FileService) {}
+  constructor(private readonly fileService: FileService) {
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+  }
 
   @Public()
-  @Post('upload/head')
-  @UseInterceptors(FileInterceptor('file', { dest: './uploads/temp' }))
-  async uploadFile(@UploadedFile() file) {
-    console.log('uploadFile', file.originalname);
-
+  @Post('upload/:type')
+  @UseInterceptors(FileInterceptor('file', { dest: tempDir }))
+  async uploadFile(@UploadedFile() file, @Param('type') type: string) {
+    if (!file) {
+      throw new NotAcceptableException('file not upload');
+    }
     // 检查文件是否已经存在于数据库中
     const existingFile = await this.fileService.findByOriginName(
-      file.originalname,
+      file.originalname || file.name,
     );
     if (existingFile) {
       await fs.promises.unlink(file.path); // 删除临时文件
@@ -38,32 +46,8 @@ export class FileController {
         message: 'File already exists',
       });
     }
-    return this.fileService.saveUploadedFile(file);
+    return this.fileService.saveUploadedFile(file, type);
   }
-  // async uploadFile(@UploadedFile() file) {
-  //   // 检查文件是否已经存在于数据库中
-  //   const existingFile = await this.fileService.findByOriginName(
-  //     file.originalname,
-  //   );
-  //   console.log('file', file.originalname, existingFile);
-  //   if (existingFile) {
-  //     // 如果文件已存在，则直接返回已有文件的地址
-  //     return { url: `/api/files/${existingFile.filename}` };
-  //   }
-  //   console.log('继续执行？', existingFile);
-  //   // 使用Jimp来处理图像
-  //   const image = await Jimp.read(file.path);
-  //   // 裁剪图像为200x200的正方形
-  //   image.cover(200, 200);
-  //   // 将裁剪后的图像覆盖原始文件
-  //   await image.writeAsync(file.path);
-  //   const savedFile = await this.fileService.create({
-  //     filename: file.filename,
-  //     path: file.path,
-  //     origin_name: file.originalname,
-  //   });
-  //   return { url: `/api/files/${savedFile.filename}` };
-  // }
 
   @Public()
   @Get(':filename') // 在路径中不包含全局前缀

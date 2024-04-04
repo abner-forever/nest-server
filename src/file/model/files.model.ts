@@ -18,15 +18,18 @@ export class File extends Model<File> {
   @Column
   path: string;
 
+  @Column
+  type: string;
+
   @CreatedAt
-  @Column({ type: 'BIGINT' })
-  register_time: number;
+  @Column
+  register_time: Date;
 
   @UpdatedAt
-  @Column({ type: 'BIGINT' })
-  update_time: number;
+  @Column
+  update_time: Date;
 
   @DeletedAt
-  @Column({ type: 'BIGINT' })
-  deleted_time?: number;
+  @Column
+  deleted_time: Date;
 }

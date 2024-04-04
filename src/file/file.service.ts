@@ -43,7 +43,7 @@ export class FileService {
   findAll() {
     return this.fileModel.findAll();
   }
-  saveUploadedFile(file) {
+  saveUploadedFile(file, type: string) {
     // 创建可读流，读取文件内容
     const readStream = fs.createReadStream(file.path);
     readStream.setEncoding('utf-8');
@@ -61,7 +61,7 @@ export class FileService {
     return new Promise((resolve, reject) => {
       readStream.on('end', async () => {
         // 保存文件到指定目录
-        const destinationDir = path.join(__dirname, '../uploads/head');
+        const destinationDir = path.join(__dirname, `../uploads/${type}`);
         const fileExtension = path.extname(file.originalname); // 获取文件后缀名
         const filename = `${file.filename}${fileExtension}`;
         const destination = path.join(destinationDir, filename);
@@ -75,8 +75,9 @@ export class FileService {
           await fs.promises.unlink(file.path);
           const savedFile = await this.create({
             filename: filename,
-            path: `/uploads/head/${filename}`,
+            path: `/uploads/${type}/${filename}`,
             origin_name: file.originalname,
+            type,
           });
           resolve({ url: `/api/files/${savedFile.filename}` });
           // 返回上传成功的信息及访问文件的地址路径

@@ -3,6 +3,6 @@ import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   phone?: string;
-  sex?: string;
+  sex?: number;
   avator?: string;
 }

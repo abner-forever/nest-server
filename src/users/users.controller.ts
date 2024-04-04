@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
   Req,
+  NotAcceptableException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,18 +31,18 @@ export class UsersController {
   }
 
   @Get('userInfo')
-  async getUserInfo(@Req() req): Promise<UserEntity> {
+  async getUserInfo(@Req() req) {
     const userData = await this.usersService.findById(req.user.userId);
+    if (!userData) throw new NotAcceptableException('用户不存在');
     const userInfo = {
-      ...userData.toJSON(),
+      ...userData?.toJSON(),
       expired: req?.user?.exp,
     };
     return new UserEntity(userInfo);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Post('updateUserInfo')
+  updateUserInfo(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+    return this.usersService.update(req.user.userId, updateUserDto);
   }
 
   @Roles(Role.Admin)

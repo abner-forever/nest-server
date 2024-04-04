@@ -1,6 +1,5 @@
 import { Exclude } from 'class-transformer';
 import { IsPhoneNumber } from 'class-validator';
-import { Role } from 'src/enums/role.enum';
 export class UserEntity {
   id: number;
 
@@ -14,16 +13,14 @@ export class UserEntity {
   sex: number;
 
   @IsPhoneNumber()
-  phone: number;
+  phone: string;
 
-  register_time: number;
+  register_time: Date;
 
-  update_time: number;
+  update_time: Date;
 
   @Exclude()
-  delete_time: number;
-
-  roles: Role[];
+  delete_time: Date;
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

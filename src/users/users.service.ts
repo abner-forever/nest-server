@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -34,9 +34,14 @@ export class UsersService {
     });
   }
 
-  update(@Param('id') id: number, updateUserDto: UpdateUserDto) {
+  async update(id, updateUserDto: UpdateUserDto) {
     console.log('updateUserDto', updateUserDto);
-    return `This action updates a #${id} user`;
+    await this.userModel.update(updateUserDto, {
+      where: {
+        id,
+      },
+    });
+    return null;
   }
 
   remove(id: number) {

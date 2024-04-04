@@ -44,14 +44,14 @@ export class Article extends Model<Article> {
   cover: string;
 
   @CreatedAt
-  @Column({ type: 'BIGINT' }) // 将日期时间存储为时间戳
-  register_time: number;
+  @Column
+  create_time: Date;
 
   @UpdatedAt
-  @Column({ type: 'BIGINT' }) // 将日期时间存储为时间戳
-  update_time: number;
+  @Column
+  update_time: Date;
 
   @DeletedAt
-  @Column({ type: 'BIGINT' }) // 将日期时间存储为时间戳
-  delete_time: number;
+  @Column
+  delete_time: Date;
 }

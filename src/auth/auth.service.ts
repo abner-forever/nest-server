@@ -14,13 +14,15 @@ export class AuthService {
     let user = await this.usersService.findByName(username);
     if (!user) {
       // 用户不存在直接注册
-      user = await this.usersService.create({
+      await this.usersService.create({
         username: username,
         password: hashPassword(pass, salt),
       });
-    }
-    if (user?.password !== hashPassword(pass, salt)) {
-      throw new UnauthorizedException({ message: '用户名或密码错误' });
+      user = await this.usersService.findByName(username);
+    } else {
+      if (user?.password !== hashPassword(pass, salt)) {
+        throw new UnauthorizedException({ message: '用户名或密码错误' });
+      }
     }
     const payload = { userId: user.id, username: user.username };
     return {
