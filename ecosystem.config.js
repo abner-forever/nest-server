@@ -8,11 +8,8 @@ module.exports = {
       out_file: './logs/info.log', //日志
       log_date_format: 'YYYY/MM/DD HH:mm:ss', //日期格式
       instances: 1,
-      exec_mode: 'cluster',
-      autorestart: true,
+      exec_mode: 'fork',
       watch: true,
-      restart_delay: 60,
-      max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
       },
