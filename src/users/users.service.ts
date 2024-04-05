@@ -34,8 +34,7 @@ export class UsersService {
     });
   }
 
-  async update(id, updateUserDto: UpdateUserDto) {
-    console.log('updateUserDto', updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
     await this.userModel.update(updateUserDto, {
       where: {
         id,

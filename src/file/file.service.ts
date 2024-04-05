@@ -68,7 +68,7 @@ export class FileService {
 
         try {
           await fs.promises.mkdir(destinationDir, { recursive: true }); // 递归创建目录
-
+          console.log('madir path', file.path, destinationDir);
           await fs.promises.copyFile(file.path, destination);
 
           // 删除临时文件
