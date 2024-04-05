@@ -17,7 +17,7 @@ import { Response } from 'express';
 import { FileService } from './file.service';
 import * as fs from 'fs';
 
-const tempDir = './uploads/temp'; // 临时文件夹
+const tempDir = join(__dirname, '../uploads/temp'); // 临时文件夹
 @Controller({ path: 'files' })
 export class FileController {
   private readonly logger = new Logger(FileController.name);

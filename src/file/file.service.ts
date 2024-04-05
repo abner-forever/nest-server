@@ -61,14 +61,12 @@ export class FileService {
     return new Promise((resolve, reject) => {
       readStream.on('end', async () => {
         // 保存文件到指定目录
-        const destinationDir = path.join(__dirname, `../uploads/${type}`);
+        const destinationDir = path.join(process.cwd(), `./uploads/${type}`);
         const fileExtension = path.extname(file.originalname); // 获取文件后缀名
         const filename = `${file.filename}${fileExtension}`;
         const destination = path.join(destinationDir, filename);
-
         try {
           await fs.promises.mkdir(destinationDir, { recursive: true }); // 递归创建目录
-          console.log('madir path', file.path, destinationDir);
           await fs.promises.copyFile(file.path, destination);
 
           // 删除临时文件
