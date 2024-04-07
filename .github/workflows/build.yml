@@ -17,7 +17,7 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
            cd /www/nest-server
-           git pull origin master
+           git pull origin main
            export NODE_HOME=/.nvm/versions/node/v18.19.1/bin/node
            export PATH=$PATH:$NODE_HOME/bin
            node -v
