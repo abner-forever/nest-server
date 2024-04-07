@@ -3,16 +3,16 @@ module.exports = {
     {
       name: 'nestjs-app',
       script: 'dist/main.js',
-      watch: 'dist/main.js',
-      error_file: './logs/error.log', //错误输出日志
-      out_file: './logs/info.log', //日志
-      log_date_format: 'YYYY/MM/DD HH:mm:ss', //日期格式
+      watch: ['dist'],
+      error_file: './logs/error.log',
+      out_file: './logs/info.log',
+      log_date_format: 'YYYY/MM/DD HH:mm:ss',
       instances: 1,
-      exec_mode: 'fork',
-      watch: true,
+      exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
       },
+      restart_delay: 5000,
     },
   ],
 };
