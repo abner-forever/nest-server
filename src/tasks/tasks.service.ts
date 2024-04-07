@@ -13,7 +13,12 @@ export class TasksService {
 
   @Cron('0 0 10 * * *') // 掘金签到每天上午10点
   signIn() {
-    jujinCheckIn();
+    const config = {
+      token: process.env.JUEJIN_TOEKN,
+      email: process.env.EMAIL_ADDRESS,
+      emailPass: process.env.EMAIL_ADDRESS_PASS,
+    };
+    jujinCheckIn(config);
   }
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT) // 在每个月的第1天凌晨1点触发任务。

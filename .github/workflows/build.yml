@@ -1,0 +1,24 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH Remote deploy
+      uses: appleboy/ssh-action@master
+      with: 
+          host: ${{ secrets.TG_HOST }}
+          username: ${{ secrets.TG_USER }}
+          password: ${{ secrets.TG_PASS }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+           cd /www/nest-server
+           git pull origin master
+           export NODE_HOME=/.nvm/versions/node/v18.19.1/bin/node
+           export PATH=$PATH:$NODE_HOME/bin
+           node -v
+           npx pnpm build
