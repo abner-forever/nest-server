@@ -12,11 +12,14 @@ export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
   @Cron('0 0 10 * * *') // 掘金签到每天上午10点
+  // @Cron(CronExpression.EVERY_10_SECONDS) // 每10秒执行一次
   signIn() {
     const config = {
-      token: process.env.JUEJIN_TOEKN,
-      email: process.env.EMAIL_ADDRESS,
-      emailPass: process.env.EMAIL_ADDRESS_PASS,
+      cookie: process.env.JUEJIN_TOEKN,
+      user: process.env.EMAIL_ADDRESS,
+      from: process.env.EMAIL_ADDRESS,
+      to: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_ADDRESS_PASS,
     };
     jujinCheckIn(config);
   }

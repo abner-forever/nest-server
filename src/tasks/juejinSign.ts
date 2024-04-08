@@ -1,4 +1,4 @@
-import nodeMailer from 'nodemailer';
+import * as nodeMailer from 'nodemailer';
 import axios from 'axios';
 
 const apiConfig = {
@@ -58,7 +58,6 @@ const draw = async (config) => {
     headers: { Cookie: cookie },
   });
   if (data.err_no) return console.log('免费抽奖失败');
-  console.log(`恭喜抽到：${data.data.lottery_name}`);
   return data;
 };
 
@@ -81,7 +80,6 @@ const getTodayDrawStatus = async (config) => {
 // 通过qq邮箱发送
 const sendEmailFromQQ = async (config, subject, html) => {
   const cfg = config;
-  console.log('sendEmailFromQQ', cfg);
   if (!cfg || !cfg.user || !cfg.pass) return;
 
   const transporter = nodeMailer.createTransport({
@@ -96,8 +94,7 @@ const sendEmailFromQQ = async (config, subject, html) => {
       html: html,
     },
     (err) => {
-      if (err) return console.log(`发送邮件失败：${err}`, true);
-      console.log('发送邮件成功');
+      if (err) return console.log(`发送邮件失败：${err}`);
     },
   );
 };
@@ -119,14 +116,12 @@ export const jujinCheckIn = async (config) => {
     sendEmailFromQQ(
       config,
       '今日掘金签到：成功 ✌',
-      `
-              <p>今日获得矿石：${incr_point}</p>
-              <p>总矿石：${sum_point}</p>
-              <p>${lottery_name ? `免费抽奖恭喜抽到：${lottery_name}` : '免费抽奖失败'}</p>
-          `,
+      ` <p>今日获得矿石：${incr_point}</p>
+        <p>总矿石：${sum_point}</p>
+        <p>${lottery_name ? `免费抽奖恭喜抽到：${lottery_name}` : '免费抽奖失败'}</p>
+    `,
     );
   } else {
-    console.log('今日掘金签到：已签');
     sendEmailFromQQ(config, '今日掘金签到：已签', '签到过了');
   }
 };
