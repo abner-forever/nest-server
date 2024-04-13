@@ -32,7 +32,6 @@ export class ArticleController {
   @Public()
   @Get('deatil/:id')
   async getArticleDetail(@Param('id') id: string) {
-    console.log('getArticleDetail');
     return this.articleService.findById(+id);
   }
   @Get('myarticleList')

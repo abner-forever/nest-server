@@ -32,9 +32,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-      console.log('token', token, payload);
-      // 💡 在这里我们将 payload 挂载到请求对象上
-      // 以便我们可以在路由处理器中访问它
+      // 💡 在这里我们将 payload 挂载到请求对象上 以便我们可以在路由处理器中访问它
       request['user'] = payload;
     } catch (error) {
       throw new UnauthorizedException({ message: error.message });

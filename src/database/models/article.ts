@@ -9,8 +9,9 @@ import {
   DataType,
   BelongsTo,
 } from 'sequelize-typescript';
-import { User } from 'src/users/model/user.model';
-@Table({ tableName: 'article', timestamps: true })
+import { User } from 'src/database/models/user';
+
+@Table({ tableName: 'article', timestamps: true, paranoid: false })
 export class Article extends Model<Article> {
   @Column({ primaryKey: true, autoIncrement: true })
   id: number;

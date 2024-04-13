@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Article } from './model/article.model';
+import { Article } from '../database/models/article';
 import { FindOptions } from 'sequelize';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { User } from 'src/users/model/user.model';
+import { User } from 'src/database/models/user';
 import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()

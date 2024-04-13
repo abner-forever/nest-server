@@ -7,6 +7,13 @@ import { join } from 'path';
 import nodeMailer from 'nodemailer';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+import { FindOptions } from 'sequelize';
+import { User } from '../database/models/user';
+import { Tasks } from '../database/models/tasks';
+import { InjectModel } from '@nestjs/sequelize';
+import { CreateTasksDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+
 dayjs.locale('zh-cn');
 
 @Injectable()
@@ -18,7 +25,11 @@ export class TasksService {
     to: string[];
     pass: string;
   };
-  constructor(private readonly fileService: FileService) {
+  constructor(
+    private readonly fileService: FileService,
+    @InjectModel(Tasks)
+    private readonly tasksModel: typeof Tasks,
+  ) {
     this.emailConfig = {
       cookie: process.env.JUEJIN_TOEKN,
       user: process.env.EMAIL_ADDRESS,
@@ -26,9 +37,67 @@ export class TasksService {
       to: [process.env.EMAIL_ADDRESS],
       pass: process.env.EMAIL_ADDRESS_PASS,
     };
-  } // 注入 B 模块中的服务
-
+  }
   private readonly logger = new Logger(TasksService.name);
+
+  async getTodoList({
+    pageNum = 1,
+    pageSize = 10,
+    userId,
+  }: {
+    pageNum?: number;
+    pageSize?: number;
+    userId?: number;
+  }) {
+    const offset = (pageNum - 1) * pageSize; // 计算偏移量
+
+    // 构建查询选项
+    const options: FindOptions = {
+      offset,
+      limit: pageSize,
+      include: [], // 添加 include 选项用于关联查询
+    };
+
+    if (userId) {
+      options.where = { user_id: userId };
+    }
+    // 关联查询用户表，并获取关联的用户名信息
+    options.include = [{ model: User, attributes: ['username'] }];
+    const { count, rows } = await this.tasksModel.findAndCountAll(options);
+
+    const totalPages = Math.ceil(count / pageSize); // 总页数
+    const hasNextPage = pageNum < totalPages; // 是否有下一页
+    // 将嵌套结构展平
+    const list = rows.map((article) => ({
+      ...article.toJSON(),
+      author: article.user.username, // 将作者信息从嵌套结构中提取出来
+      user: undefined,
+    }));
+    return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count }; // 返回带有页码相关信息的响应数据
+  }
+  // 创建任务
+  async create(createTasksDto: CreateTasksDto) {
+    await this.tasksModel.create(createTasksDto);
+    return null;
+  }
+  // 更新任务
+  async update(updateTaskDto: UpdateTaskDto) {
+    await this.tasksModel.update(updateTaskDto, {
+      where: {
+        // 更新条件，例如：id
+        id: updateTaskDto.id,
+      },
+    });
+    return null;
+  }
+
+  async delete(id: number) {
+    await this.tasksModel.destroy({
+      where: {
+        id,
+      },
+    });
+  }
 
   @Cron('0 0 10 * * *') // 掘金签到每天上午10点
   // @Cron(CronExpression.EVERY_10_SECONDS) // 每10秒执行一次

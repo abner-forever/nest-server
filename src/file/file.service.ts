@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { File } from './model/files.model';
+import { File } from '../database/models/files';
 import { InjectModel } from '@nestjs/sequelize';
 import { isNumber } from 'class-validator';
 import { Op } from 'sequelize';

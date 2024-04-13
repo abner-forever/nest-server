@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { File } from './model/files.model';
+import { File } from '../database/models/files';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { FileController } from './file.controller';
 import { FileService } from './file.service';

@@ -1,13 +1,7 @@
-import {
-  ClassSerializerInterceptor,
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { logger } from './middleware/logger.middleware';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
@@ -15,9 +9,8 @@ import { TimeoutInterceptor } from './interceptor/timeout.interceptor';
 // import { CacheInterceptor } from './interceptor/cache.interceptor';
 // import { ErrorsInterceptor } from './interceptor/exception.interceptor';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './users/model/user.model';
+import { User } from './database/models/user';
 import { ConfigModule } from '@nestjs/config';
-import { UsersController } from './users/users.controller';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
@@ -43,6 +36,7 @@ import { TaskModule } from './tasks/tasks.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWD,
       database: process.env.DB_NAME,
+      timezone: '+08:00', // 设置时区
       models: [User],
       autoLoadModels: true,
       synchronize: process.env.NODE_ENV !== 'production', // 设置 synchronize: true 不能被用于生产环境，否则您可能会丢失生产环境数据
@@ -86,7 +80,5 @@ import { TaskModule } from './tasks/tasks.module';
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(logger).forRoutes(UsersController);
-  }
+  configure() {}
 }
