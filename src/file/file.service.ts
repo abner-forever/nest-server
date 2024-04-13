@@ -3,8 +3,8 @@ import { File } from './model/files.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { isNumber } from 'class-validator';
 import { Op } from 'sequelize';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 @Injectable()
 export class FileService {

@@ -3,8 +3,8 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 // import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
-import * as bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 
 declare const module: any;
 
@@ -17,13 +17,13 @@ async function main() {
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
-    .setTitle('Blog APIS')
-    .setDescription('The cats API description')
+    .setTitle('blog api')
+    .setDescription('我的博客接口文档')
     .setVersion('1.0')
     .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('apis', app, document);
+  SwaggerModule.setup('apis/doc', app, document);
   await app.listen(8080);
   if (module.hot) {
     module.hot.accept();

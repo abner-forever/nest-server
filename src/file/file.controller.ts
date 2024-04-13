@@ -15,7 +15,7 @@ import { createReadStream } from 'fs';
 import { join } from 'path';
 import { Response } from 'express';
 import { FileService } from './file.service';
-import * as fs from 'fs';
+import fs from 'fs';
 
 const tempDir = join(__dirname, '../uploads/temp'); // 临时文件夹
 @Controller({ path: 'files' })

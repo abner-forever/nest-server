@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 // 生成随机盐值
 export const generateSalt = () => {

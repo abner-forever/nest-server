@@ -4,24 +4,68 @@ import { jujinCheckIn } from './juejinSign';
 import { FileService } from 'src/file/file.service';
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import nodeMailer from 'nodemailer';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+dayjs.locale('zh-cn');
 
 @Injectable()
 export class TasksService {
-  constructor(private readonly fileService: FileService) {} // 注入 B 模块中的服务
+  emailConfig: {
+    cookie: string;
+    user: string;
+    from: string;
+    to: string[];
+    pass: string;
+  };
+  constructor(private readonly fileService: FileService) {
+    this.emailConfig = {
+      cookie: process.env.JUEJIN_TOEKN,
+      user: process.env.EMAIL_ADDRESS,
+      from: process.env.EMAIL_ADDRESS,
+      to: [process.env.EMAIL_ADDRESS],
+      pass: process.env.EMAIL_ADDRESS_PASS,
+    };
+  } // 注入 B 模块中的服务
 
   private readonly logger = new Logger(TasksService.name);
 
   @Cron('0 0 10 * * *') // 掘金签到每天上午10点
   // @Cron(CronExpression.EVERY_10_SECONDS) // 每10秒执行一次
   signIn() {
-    const config = {
-      cookie: process.env.JUEJIN_TOEKN,
-      user: process.env.EMAIL_ADDRESS,
-      from: process.env.EMAIL_ADDRESS,
-      to: process.env.EMAIL_ADDRESS,
-      pass: process.env.EMAIL_ADDRESS_PASS,
-    };
-    jujinCheckIn(config);
+    jujinCheckIn(this.emailConfig);
+  }
+
+  // @Cron('0 0 20 * * *') // 每晚8点提醒锻炼打卡
+  @Cron(CronExpression.EVERY_10_MINUTES) // test 每10分钟执行一次
+  exerCise() {
+    const today = dayjs().format('YYYY-MM-DD dddd');
+    // 问卷地址
+    const questionUrl = 'https://f.wps.cn/g/hpDgagG6';
+    this.sendEmail({
+      title: '今天该锻炼啦',
+      content: `<div>
+      <p class="title">今天是${today}</p>
+      <div class="desc">
+          <p>请开始你的锻炼</p>
+          <p>运动结束后可以填写以下问卷进行打卡</p>
+          <a href=${questionUrl}>去打卡吧</a>
+      </div>
+  </div>
+  
+  <style type="text/css" media="all">
+      .title{
+          font-size: 24px;
+          line-height: 40px;
+          font-weight: 600;
+      }
+      .desc{
+          margin-left: 10px;
+          margin-top: 20px
+      }
+  </style>`,
+    });
+    console.log('发送打卡邮件', dayjs().format('YYYY-MM-DD dddd hh:mm:ss'));
   }
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT) // 在每个月的第1天凌晨1点触发任务。
@@ -31,7 +75,6 @@ export class TasksService {
     this.clearCache(folderPath);
   }
   @Cron(CronExpression.EVERY_WEEKEND) // 每周末清理一次
-  // @Cron(CronExpression.EVERY_10_SECONDS) // 每10秒执行一次
   async clearTemp() {
     this.logger.log('定时临时上传文件');
     const folderPath = './uploads/temp';
@@ -66,5 +109,35 @@ export class TasksService {
     } catch (error) {
       this.logger.error('Error cleaning up uploaded files:', error);
     }
+  }
+
+  /** 邮件发送 */
+  sendEmail({ title, content }) {
+    const transporter = nodeMailer.createTransport({
+      service: 'qq',
+      auth: { user: this.emailConfig.user, pass: this.emailConfig.pass },
+    });
+    const send = ({ user, title, content }) => {
+      return new Promise((resolve) => {
+        transporter.sendMail(
+          {
+            from: this.emailConfig.from,
+            to: user,
+            subject: title,
+            html: content,
+          },
+          (err) => {
+            if (err) {
+              console.log('邮件发送失败', err);
+              resolve(new Error(`邮件发送失败:${err.name}  ${err.message}`));
+            }
+          },
+        );
+        resolve(null);
+      });
+    };
+    this.emailConfig.to.forEach((item) => {
+      send({ user: item, title, content });
+    });
   }
 }

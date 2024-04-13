@@ -1,4 +1,4 @@
-import * as nodeMailer from 'nodemailer';
+import nodeMailer from 'nodemailer';
 import axios from 'axios';
 
 const apiConfig = {
