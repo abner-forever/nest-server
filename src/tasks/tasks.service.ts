@@ -36,13 +36,15 @@ export class TasksService {
     jujinCheckIn(this.emailConfig);
   }
 
-  // @Cron('0 0 20 * * *') // 每晚8点提醒锻炼打卡
-  @Cron(CronExpression.EVERY_10_MINUTES) // test 每10分钟执行一次
+  @Cron(CronExpression.EVERY_DAY_AT_8PM) // 每晚8点提醒锻炼打卡
   exerCise() {
     const today = dayjs().format('YYYY-MM-DD dddd');
     // 问卷地址
     const questionUrl = 'https://f.wps.cn/g/hpDgagG6';
+    // 发送邮件的对象
+    const users = [process.env.EMAIL_ADDRESS, process.env.EMAIL_ADDRESS_JIA];
     this.sendEmail({
+      users,
       title: '今天该锻炼啦',
       content: `<div>
       <p class="title">今天是${today}</p>
@@ -112,7 +114,7 @@ export class TasksService {
   }
 
   /** 邮件发送 */
-  sendEmail({ title, content }) {
+  sendEmail({ users, title, content }) {
     const transporter = nodeMailer.createTransport({
       service: 'qq',
       auth: { user: this.emailConfig.user, pass: this.emailConfig.pass },
@@ -136,7 +138,7 @@ export class TasksService {
         resolve(null);
       });
     };
-    this.emailConfig.to.forEach((item) => {
+    users.forEach((item) => {
       send({ user: item, title, content });
     });
   }

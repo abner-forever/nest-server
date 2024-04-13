@@ -33,6 +33,10 @@ export class TasksController {
         }
     </style>`;
 
-    this.tasksService.sendEmail({ title: params.title, content });
+    this.tasksService.sendEmail({
+      users: [process.env.EMAIL_ADDRESS],
+      title: params.title,
+      content,
+    });
   }
 }
