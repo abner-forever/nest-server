@@ -13,9 +13,18 @@ import { Tasks } from '../database/models/tasks';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateTasksDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { exerciseEmail } from 'src/template/email';
 
 dayjs.locale('zh-cn');
-
+export const workoutsList = {
+  0: ['瑜伽', '健身操', '哑铃训练'],
+  1: ['跳绳', '仰卧起坐', '俯卧撑'],
+  2: ['晨间拉伸', '椭圆机训练', '深蹲'],
+  3: ['动感单车', '平板支撑', '引体向上'],
+  4: ['拳击训练', '波比跳', '舞蹈课程'],
+  5: ['踢踏舞', '游泳', '户外跑步'],
+  6: ['拉伸放松', '拳击有氧操', '自行车训练'],
+};
 @Injectable()
 export class TasksService {
   emailConfig: {
@@ -108,33 +117,18 @@ export class TasksService {
   @Cron(CronExpression.EVERY_DAY_AT_8PM) // 每晚8点提醒锻炼打卡
   exerCise() {
     const today = dayjs().format('YYYY-MM-DD dddd');
+    const dayOfWeek = dayjs().day();
+    const workouts = workoutsList[dayOfWeek];
+    console.log('workouts', workouts);
     // 问卷地址
     const questionUrl = 'https://f.wps.cn/g/hpDgagG6';
     // 发送邮件的对象
     const users = [process.env.EMAIL_ADDRESS, process.env.EMAIL_ADDRESS_JIA];
+    const content = exerciseEmail({ today, questionUrl, workouts });
     this.sendEmail({
       users,
       title: '今天该锻炼啦',
-      content: `<div>
-      <p class="title">今天是${today}</p>
-      <div class="desc">
-          <p>请开始你的锻炼</p>
-          <p>运动结束后可以填写以下问卷进行打卡</p>
-          <a href=${questionUrl}>去打卡吧</a>
-      </div>
-  </div>
-  
-  <style type="text/css" media="all">
-      .title{
-          font-size: 24px;
-          line-height: 40px;
-          font-weight: 600;
-      }
-      .desc{
-          margin-left: 10px;
-          margin-top: 20px
-      }
-  </style>`,
+      content,
     });
     console.log('发送打卡邮件', dayjs().format('YYYY-MM-DD dddd hh:mm:ss'));
   }
