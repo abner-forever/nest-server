@@ -19,16 +19,16 @@ import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FileModule } from './file/file.module';
 import { TaskModule } from './tasks/tasks.module';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+// import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
-    RedisModule.forRoot({
-      config: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
+    // RedisModule.forRoot({
+    //   config: {
+    //     host: 'localhost',
+    //     port: 6379,
+    //   },
+    // }),
     HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
