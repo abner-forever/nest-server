@@ -1,9 +1,12 @@
 import { Exclude } from 'class-transformer';
-import { IsPhoneNumber } from 'class-validator';
+import { IsEmail, IsPhoneNumber } from 'class-validator';
 export class UserEntity {
   id: number;
 
   username: string;
+
+  @IsEmail({}, { message: '邮箱格式不正确' })
+  email: string;
 
   @Exclude()
   password: string;

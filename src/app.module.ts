@@ -12,8 +12,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './database/models/user';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
 import { AuthService } from './auth/auth.service';
 import { RolesGuard } from './guard/roles.guard';
 import { ArticleModule } from './article/article.module';
@@ -21,9 +19,16 @@ import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FileModule } from './file/file.module';
 import { TaskModule } from './tasks/tasks.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
+    RedisModule.forRoot({
+      config: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -44,11 +49,6 @@ import { TaskModule } from './tasks/tasks.module';
     UsersModule,
     AuthModule,
     FileModule,
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '30d' },
-    }),
     ArticleModule,
     ScheduleModule.forRoot(),
     TaskModule,

@@ -12,7 +12,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response: Response = ctx.getResponse();
     const status = exception.getStatus();
-
+    console.log('HttpExceptionFilter', exception.message);
     const message = exception.message
       ? exception.message
       : status >= 500
@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse = {
       code: status,
       message,
-      content: {},
+      data: null,
     };
 
     response.status(status);

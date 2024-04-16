@@ -33,4 +33,4 @@ jobs:
             cd /www/blog-server
             npx pnpm install
             npm run build
-            npm run
+            npm run pm2 

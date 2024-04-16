@@ -9,11 +9,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Public } from 'src/decorator/auth.decorator';
-import dayjs from 'dayjs';
 import { CreateTasksDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { authcodeEmail } from 'src/template/email';
 import Email from 'src/utils/email';
 
 @Controller('task')
@@ -21,24 +18,6 @@ export class TasksController {
   email: Email;
   constructor(private readonly tasksService: TasksService) {
     this.email = new Email();
-  }
-  @Post('email')
-  @Public()
-  sendEmail(@Body() params: Record<string, string>) {
-    const today = dayjs().format('YYYY-MM-DD dddd');
-    // // 问卷地址
-    const options = {
-      date: today,
-      code: 'test',
-      sign: '12',
-    };
-    const message = authcodeEmail(options);
-    // 发送邮件的对象
-    this.email.sendEmail({
-      toEmail: process.env.EMAIL_ADDRESS,
-      title: params.title,
-      message,
-    });
   }
   @Get('/todolist')
   getTodoList(

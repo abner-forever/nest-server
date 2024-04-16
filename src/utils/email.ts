@@ -48,11 +48,14 @@ class Email {
       // 以HTML的格式显示，这样可以显示图片、链接、字体颜色等信息
       html: message,
     };
-    return this.mailer.sendMail(mailOptions, (err) => {
-      if (err) {
-        console.error('邮件发送失败', err);
-        throw Error(err);
-      }
+    return new Promise((resolve, reject) => {
+      this.mailer.sendMail(mailOptions, (err) => {
+        if (err) {
+          console.error('邮件发送失败', err);
+          reject(err);
+        }
+      });
+      resolve(null);
     });
   }
 }

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { HttpExceptionFilter } from './filter/http-exception.filter';
+// import { HttpExceptionFilter } from './filter/http-exception.filter';
 // import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -15,12 +15,11 @@ async function main() {
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
   app.use(cookieParser());
   app.setGlobalPrefix('api');
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
     .setTitle('blog api')
     .setDescription('我的博客接口文档')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apis/doc', app, document);

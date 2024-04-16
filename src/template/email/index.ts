@@ -1,38 +1,24 @@
 interface AuthcodeEmailParams {
   code: string;
-  sign: string;
   date: string;
 }
 /**
  * 验证码邮件模板
  */
 export const authcodeEmail = (params: AuthcodeEmailParams) => {
-  return `
-<div class="biu-nav-email"
-  style="max-width: 600px;min-width: 300px;margin: 40px auto;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);font-size: 16px;padding: 20px;background-image: linear-gradient(to right, #46de97 0%, #03e4d5 100%);border-radius: 5px;color: #fff;">
-  <h3 style="margin-bottom: 40px;">
-    Hi! 亲爱的用户：
-  </h3>
-  <p style="padding-left: 20px;">
-    您正在进行邮箱验证,本次请求的验证码为:
+  return `<div style="max-width: 600px; margin: 40px auto; padding: 20px; border-radius: 5px; background: linear-gradient(to right, #46de97, #03e4d5); box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif; font-size: 16px; color: #333333;">
+  <h3 style="font-size: 24px; color: #333333; margin-bottom: 20px;">Hi, 亲爱的用户：</h3>
+  <p style="margin-bottom: 20px; line-height: 1.6;">
+    感谢您选择我们的服务！<br>
+    您正在进行邮箱验证，本次请求的验证码为：<strong style="color: #f60; letter-spacing: 3px;">${params.code}</strong>。<br>
+    为了保障您帐号的安全性，请在10分钟内完成验证。<br>
+    祝您生活愉快！
   </p>
-  <p style="color: #dde2e2;padding-left: 14px;">
-    <strong style="color: #f60;font-size: 24px;">
-     ${params.code}
-    </strong>
-    <span>(为了保障您帐号的安全性,请在30分钟内完成验证,祝您生活愉快!)</span>
+  <p style="margin-bottom: 20px; line-height: 1.6;">
+    <strong style="color: #333333;">快速访问：</strong><br>
+    <a href="https://foreverheart.top" style="color: #007bff; text-decoration: none;" target="_blank" rel="noopener noreferrer">https://foreverheart.top</a>
   </p>
-  <p style="padding-left: 20px;">
-    <span>快速访问:</span>
-    <a href="https://foreverheart.top" style="color:#fff" target="_blank" rel="noopener noreferrer">https:
-      //foreverheart.top</a>
-  </p>
-  <p style="margin-top: 40px;text-align: right;">
-    ${params.sign}
-  </p>
-  <p style="text-align: right;">
-    ${params.date}
-  </p>
+  <p style="text-align: right; color: #666666;">${params.date}</p>
 </div>
 `;
 };
