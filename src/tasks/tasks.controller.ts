@@ -12,6 +12,7 @@ import { TasksService } from './tasks.service';
 import { CreateTasksDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import Email from 'src/utils/email';
+import { convertObjectKeysToSnakeCase } from 'src/utils';
 
 @Controller('task')
 export class TasksController {
@@ -24,19 +25,28 @@ export class TasksController {
     @Req() req,
     @Query('pageNum') pageNum: number = 1, // 默认页码为 1
     @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
+    @Query('type') type?: string, // 任务类型
   ) {
     return this.tasksService.getTodoList({
       pageNum: +pageNum,
       pageSize: +pageSize,
+      type,
       userId: req.user.userId,
     });
   }
   @Post('add')
   @UseInterceptors(ClassSerializerInterceptor)
   async addTasks(@Req() req, @Body() tasks: CreateTasksDto) {
+    const { userId } = req.user;
+    if (tasks.type === 'exercise') {
+      const hasTask = await this.tasksService.getTask({
+        type: tasks.type,
+        userId,
+      });
+      if (hasTask) return Promise.reject(Error('今日已打卡, 请勿重复提交'));
+    }
     return this.tasksService.create({
-      ...tasks,
-      user_id: req.user.userId,
+      ...convertObjectKeysToSnakeCase({ ...tasks, userId }),
     });
   }
   @Post('update')

@@ -7,4 +7,9 @@ export class CreateTasksDto {
    */
   status: number;
   user_id: number;
+  spend_time: number;
+
+  type: string;
+
+  rate: number;
 }

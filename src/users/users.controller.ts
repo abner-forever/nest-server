@@ -8,6 +8,8 @@ import {
   Res,
   Req,
   NotAcceptableException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,6 +33,7 @@ export class UsersController {
   }
 
   @Get('userInfo')
+  @UseInterceptors(ClassSerializerInterceptor)
   async getUserInfo(@Req() req) {
     const userData = await this.usersService.findById(req.user.userId);
     if (!userData) throw new NotAcceptableException('用户不存在');

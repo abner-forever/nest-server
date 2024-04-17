@@ -14,6 +14,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateTasksDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { exerciseEmail } from 'src/template/email';
+import { Op } from 'sequelize';
 
 dayjs.locale('zh-cn');
 export const workoutsList = {
@@ -49,15 +50,7 @@ export class TasksService {
   }
   private readonly logger = new Logger(TasksService.name);
 
-  async getTodoList({
-    pageNum = 1,
-    pageSize = 10,
-    userId,
-  }: {
-    pageNum?: number;
-    pageSize?: number;
-    userId?: number;
-  }) {
+  async getTodoList({ pageNum = 1, pageSize = 10, userId, type }) {
     const offset = (pageNum - 1) * pageSize; // 计算偏移量
 
     // 构建查询选项
@@ -68,7 +61,7 @@ export class TasksService {
     };
 
     if (userId) {
-      options.where = { user_id: userId };
+      options.where = { user_id: userId, type: type || null };
     }
     // 关联查询用户表，并获取关联的用户名信息
     options.include = [{ model: User, attributes: ['username'] }];
@@ -84,10 +77,32 @@ export class TasksService {
     }));
     return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count }; // 返回带有页码相关信息的响应数据
   }
+  async getTask({ type, userId }) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 将时间设置为今天的开始时间
+    const result = await this.tasksModel.findOne({
+      where: {
+        type: type,
+        create_time: {
+          [Op.gte]: today, // 使用大于或等于操作符，表示 create_time 大于或等于今天的开始时间
+        },
+      },
+      include: [
+        {
+          model: User,
+          where: {
+            id: userId, // 假设 userId 是你要限制的用户的 ID
+          },
+          attributes: ['username'],
+        },
+      ],
+    });
+    return result;
+  }
   // 创建任务
   async create(createTasksDto: CreateTasksDto) {
     await this.tasksModel.create(createTasksDto);
-    return null;
+    return true;
   }
   // 更新任务
   async update(updateTaskDto: UpdateTaskDto) {

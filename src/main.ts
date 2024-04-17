@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import { ValidationPipe } from './utils/pipe/validation';
 
 declare const module: any;
 
@@ -15,6 +16,7 @@ async function main() {
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
   app.use(cookieParser());
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe());
   // app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
     .setTitle('blog api')

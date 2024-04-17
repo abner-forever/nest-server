@@ -25,7 +25,6 @@ export const authcodeEmail = (params: AuthcodeEmailParams) => {
 
 /**
  * 锻炼邮件模板
- * TODO:
  */
 export const exerciseEmail = ({ questionUrl, today, workouts }) => {
   return `<div class="container" style="background: linear-gradient(135deg, #65d3ff, #7dffa6); border-radius: 8px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); padding: 20px; max-width: 500px; margin: 20px auto;">
