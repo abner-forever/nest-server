@@ -1,5 +1,4 @@
 {
-  "branch": "main",
   "branches": ["main"],
   "plugins": [
     "@semantic-release/commit-analyzer",
@@ -28,5 +27,6 @@
       }
     ]
   ],
-  "preset": "angular"
+  "preset": "angular",
+  "debug": true
 }
