@@ -16,7 +16,7 @@ jobs:
       - name: release
         uses: actions/setup-node@v1
         with:
-          node-version: 20.8.1
+          node-version: 18.16.1
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -  run: 
