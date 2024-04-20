@@ -13,14 +13,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: release
+      - name: install node
         uses: actions/setup-node@v1
         with:
           node-version: 20.8.1
+
+      - name: install
+        run: npx pnpm i
+
+      - name: semantic-release
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      -  run: 
-           npx pnpm install
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
            npm run semantic-release
 
       - name: Copy files to server
