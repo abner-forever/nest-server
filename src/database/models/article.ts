@@ -26,10 +26,10 @@ export class Article extends Model<Article> {
   @Column({ type: DataType.TEXT, defaultValue: '未命名文章' })
   title: string;
 
-  @Column(DataType.TEXT) // 使用 TEXT 类型
+  @Column(DataType.TEXT)
   description: string;
 
-  @Column(DataType.TEXT) // 使用 TEXT 类型
+  @Column(DataType.TEXT)
   content: string;
 
   @Column

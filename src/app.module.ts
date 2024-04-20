@@ -1,7 +1,7 @@
 import { ClassSerializerInterceptor, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './module/users/users.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
@@ -11,14 +11,14 @@ import { TimeoutInterceptor } from './interceptor/timeout.interceptor';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './database/models/user';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
-import { RolesGuard } from './guard/roles.guard';
-import { ArticleModule } from './article/article.module';
+import { AuthModule } from './module/auth/auth.module';
+import { AuthService } from './module/auth/auth.service';
+import { RolesGuard } from './utils/guard/roles.guard';
+import { ArticleModule } from './module/article/article.module';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
-import { FileModule } from './file/file.module';
-import { TaskModule } from './tasks/tasks.module';
+import { FileModule } from './module/file/file.module';
+import { TaskModule } from './module/tasks/tasks.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
