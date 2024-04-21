@@ -43,4 +43,7 @@ export class Tasks extends Model<Tasks> {
 
   @Column({ defaultValue: null })
   notificationTime: string;
+
+  @Column
+  createTime: Date;
 }

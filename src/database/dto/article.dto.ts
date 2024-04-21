@@ -10,3 +10,8 @@ export class CreateArticleDto {
 export class UpdateArticleDto extends PartialType(CreateArticleDto) {
   id: number;
 }
+export class ListParams {
+  pageNum?: number;
+  pageSize?: number;
+  userId?: number;
+}

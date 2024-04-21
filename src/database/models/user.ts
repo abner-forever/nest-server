@@ -21,4 +21,7 @@ export class User extends Model<User> {
 
   @Column
   phone: string;
+
+  @Column
+  sign: string;
 }

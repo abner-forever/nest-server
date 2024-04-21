@@ -46,7 +46,7 @@ export class UsersService {
         id,
       },
     });
-    return null;
+    return true;
   }
 
   remove(id: number) {

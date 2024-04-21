@@ -42,7 +42,7 @@ export class UsersController {
     };
     return new UserEntity(userInfo);
   }
-  @Post('updateUserInfo')
+  @Post('update')
   updateUserInfo(@Body() updateUserDto: UpdateUserDto, @Req() req) {
     return this.usersService.update(req.user.userId, updateUserDto);
   }

@@ -3,6 +3,8 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Query,
   Req,
@@ -41,7 +43,11 @@ export class TasksController {
         type: tasks.type,
         userId,
       });
-      if (hasTask) return Promise.reject(Error('今日已打卡, 请勿重复提交'));
+      if (hasTask)
+        throw new HttpException(
+          '今日已打卡, 请勿重复提交',
+          HttpStatus.BAD_REQUEST,
+        );
     }
     return this.tasksService.create({
       ...tasks,

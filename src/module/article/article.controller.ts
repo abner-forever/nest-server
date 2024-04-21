@@ -17,11 +17,11 @@ import {
 } from 'src/database/dto/article.dto';
 import { Public } from 'src/utils/decorator/auth.decorator';
 
-@Controller('article')
+@Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
   @Public()
-  @Get('list')
+  @Get()
   async getArticleList(
     @Query('pageNum') pageNum: number = 1, // 默认页码为 1
     @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
@@ -36,7 +36,7 @@ export class ArticleController {
   async getArticleDetail(@Param('id') id: string) {
     return this.articleService.findById(+id);
   }
-  @Get('list/my')
+  @Get('my')
   @UseInterceptors(ClassSerializerInterceptor)
   async getArticleListByUser(
     @Req() req,
@@ -62,7 +62,7 @@ export class ArticleController {
   async updateArticle(@Body() article: UpdateArticleDto) {
     return this.articleService.update(article);
   }
-  @Delete('delete')
+  @Delete()
   @UseInterceptors(ClassSerializerInterceptor)
   async deleteArticle(@Body() { id }) {
     return this.articleService.delete(id);
