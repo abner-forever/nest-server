@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/abner-forever/nest-server/compare/v1.0.0...v1.0.1) (2024-04-21)
+
+
+### Bug Fixes
+
+*  修改接口路径 ([81c1cac](https://github.com/abner-forever/nest-server/commit/81c1cacaee56c5ccead1e890e6a632159ef54faa))
+
 # 1.0.0 (2024-04-20)
 
 
