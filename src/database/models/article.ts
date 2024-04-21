@@ -2,9 +2,6 @@ import {
   Column,
   Model,
   Table,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
   ForeignKey,
   DataType,
   BelongsTo,
@@ -18,7 +15,7 @@ export class Article extends Model<Article> {
 
   @ForeignKey(() => User)
   @Column({ field: 'author_id' })
-  author_id: number;
+  authorId: number;
 
   @BelongsTo(() => User)
   user: User;
@@ -26,33 +23,21 @@ export class Article extends Model<Article> {
   @Column({ type: DataType.TEXT, defaultValue: '未命名文章' })
   title: string;
 
-  @Column(DataType.TEXT) // 使用 TEXT 类型
+  @Column(DataType.TEXT)
   description: string;
 
-  @Column(DataType.TEXT) // 使用 TEXT 类型
+  @Column(DataType.TEXT)
   content: string;
 
   @Column
   type: number;
 
   @Column({ type: DataType.INTEGER, defaultValue: 0 })
-  view_count: number;
+  viewCount: number;
 
   @Column({ type: DataType.INTEGER, defaultValue: 0 })
-  like_count: number;
+  likeCount: number;
 
   @Column
   cover: string;
-
-  @CreatedAt
-  @Column
-  create_time: Date;
-
-  @UpdatedAt
-  @Column
-  update_time: Date;
-
-  @DeletedAt
-  @Column
-  delete_time: Date;
 }

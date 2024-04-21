@@ -2,23 +2,20 @@ import {
   Column,
   Model,
   Table,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
   ForeignKey,
   DataType,
   BelongsTo,
 } from 'sequelize-typescript';
 import { User } from 'src/database/models/user';
 
-@Table({ tableName: 'tasks', timestamps: true })
+@Table({ tableName: 'tasks' })
 export class Tasks extends Model<Tasks> {
   @Column({ primaryKey: true, autoIncrement: true })
   id: number;
 
   @ForeignKey(() => User)
   @Column({ field: 'user_id' })
-  user_id: number;
+  userId: number;
 
   @BelongsTo(() => User)
   user: User;
@@ -33,7 +30,7 @@ export class Tasks extends Model<Tasks> {
   type: string;
 
   @Column({ defaultValue: 0 })
-  spend_time: number;
+  spendTime: number;
 
   @Column({ defaultValue: 0 })
   status: number;
@@ -42,20 +39,8 @@ export class Tasks extends Model<Tasks> {
   rate: number;
 
   @Column({ defaultValue: false })
-  email_notification: boolean;
+  emailNotification: boolean;
 
   @Column({ defaultValue: null })
-  notification_time: string;
-
-  @CreatedAt
-  @Column
-  create_time: Date;
-
-  @UpdatedAt
-  @Column
-  update_time: Date;
-
-  @DeletedAt
-  @Column
-  delete_time: Date;
+  notificationTime: string;
 }
