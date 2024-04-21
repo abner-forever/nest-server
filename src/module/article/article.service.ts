@@ -5,6 +5,7 @@ import { FindOptions } from 'sequelize';
 import { User } from 'src/database/models/user';
 import {
   CreateArticleDto,
+  ListParams,
   UpdateArticleDto,
 } from 'src/database/dto/article.dto';
 
@@ -16,15 +17,7 @@ export class ArticleService {
   ) {}
 
   // 分页查询文章列表
-  async getArticleList({
-    pageNum = 1,
-    pageSize = 10,
-    userId,
-  }: {
-    pageNum?: number;
-    pageSize?: number;
-    userId?: number;
-  }) {
+  async getArticleList({ pageNum = 1, pageSize = 10, userId }: ListParams) {
     const offset = (pageNum - 1) * pageSize; // 计算偏移量
 
     // 构建查询选项

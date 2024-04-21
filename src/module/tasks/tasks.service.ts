@@ -81,7 +81,7 @@ export class TasksService {
     const result = await this.tasksModel.findOne({
       where: {
         type: type,
-        createdAt: {
+        createTime: {
           [Op.gte]: today, // 使用大于或等于操作符，表示 create_time 大于或等于今天的开始时间
         },
       },
