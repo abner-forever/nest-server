@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { convertKeysToCamelCase } from 'src/utils';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, any> {
@@ -16,13 +15,15 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
         code: 0, // 成功状态码
         message: 'success', // 成功消息
         success: true,
-        data: convertKeysToCamelCase(this.serializeData(data)), // 序列化数据
+        data: this.serializeData(data), // 序列化数据
       })),
     );
   }
 
   private serializeData(data: any): any {
-    if (Array.isArray(data)) {
+    if (data && data instanceof Date) {
+      return new Date(data).getTime();
+    } else if (Array.isArray(data)) {
       // 如果返回的数据是数组，则递归调用 serializeData 方法处理数组中的每个元素
       return data.map((item) => this.serializeData(item));
     } else if (

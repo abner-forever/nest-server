@@ -52,7 +52,6 @@ export class TasksService {
 
   async getTodoList({ pageNum = 1, pageSize = 10, userId, type }) {
     const offset = (pageNum - 1) * pageSize; // 计算偏移量
-
     // 构建查询选项
     const options: FindOptions = {
       offset,
@@ -66,13 +65,12 @@ export class TasksService {
     // 关联查询用户表，并获取关联的用户名信息
     options.include = [{ model: User, attributes: ['username'] }];
     const { count, rows } = await this.tasksModel.findAndCountAll(options);
-
     const totalPages = Math.ceil(count / pageSize); // 总页数
     const hasNextPage = pageNum < totalPages; // 是否有下一页
     // 将嵌套结构展平
-    const list = rows.map((article) => ({
-      ...article.toJSON(),
-      author: article.user.username, // 将作者信息从嵌套结构中提取出来
+    const list = rows.map((item) => ({
+      ...item.dataValues,
+      author: item.user.username, // 将作者信息从嵌套结构中提取出来
       user: undefined,
     }));
     return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count }; // 返回带有页码相关信息的响应数据
@@ -83,7 +81,7 @@ export class TasksService {
     const result = await this.tasksModel.findOne({
       where: {
         type: type,
-        create_time: {
+        createdAt: {
           [Op.gte]: today, // 使用大于或等于操作符，表示 create_time 大于或等于今天的开始时间
         },
       },

@@ -1,24 +1,19 @@
 import { ClassSerializerInterceptor, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './module/users/users.module';
+import { UsersModule } from './users/users.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './interceptor/logging.interceptor';
-import { TransformInterceptor } from './interceptor/transform.interceptor';
-import { TimeoutInterceptor } from './interceptor/timeout.interceptor';
-// import { CacheInterceptor } from './interceptor/cache.interceptor';
-// import { ErrorsInterceptor } from './interceptor/exception.interceptor';
+import { LoggingInterceptor } from '../utils/interceptor/logging.interceptor';
+import { TransformInterceptor } from '../utils/interceptor/transform.interceptor';
+import { TimeoutInterceptor } from '../utils/interceptor/timeout.interceptor';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './database/models/user';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './module/auth/auth.module';
-import { AuthService } from './module/auth/auth.service';
-import { RolesGuard } from './utils/guard/roles.guard';
-import { ArticleModule } from './module/article/article.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
+import { RolesGuard } from '../utils/guard/roles.guard';
+import { ArticleModule } from './article/article.module';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
-import { FileModule } from './module/file/file.module';
-import { TaskModule } from './module/tasks/tasks.module';
+import { FileModule } from './file/file.module';
+import { TaskModule } from './tasks/tasks.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
@@ -41,8 +36,16 @@ import { TaskModule } from './module/tasks/tasks.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWD,
       database: process.env.DB_NAME,
-      timezone: '+08:00', // 设置时区
-      models: [User],
+      define: {
+        // 设置全局模型选项
+        timestamps: true,
+        underscored: true,
+        createdAt: 'createTime',
+        updatedAt: 'updateTime',
+        deletedAt: 'deleteTime',
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_unicode_ci',
+      },
       autoLoadModels: true,
       synchronize: process.env.NODE_ENV !== 'production', // 设置 synchronize: true 不能被用于生产环境，否则您可能会丢失生产环境数据
     }),
@@ -53,10 +56,9 @@ import { TaskModule } from './module/tasks/tasks.module';
     ScheduleModule.forRoot(),
     TaskModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
     AuthService,
-    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,

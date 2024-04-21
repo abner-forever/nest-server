@@ -58,8 +58,7 @@ export class AuthController {
       title: '【Abner的博客】',
       message,
     });
-    const now = new Date();
-    const oneMinuteLater = new Date(now.getTime() + 60000); // 60000 毫秒 = 1 分钟
+    const oneMinuteLater = Date.now() + 60000; // 60000 毫秒 = 1 分钟
     return {
       expiredTime: oneMinuteLater,
     };

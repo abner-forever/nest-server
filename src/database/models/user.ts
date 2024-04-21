@@ -1,11 +1,4 @@
-import {
-  Column,
-  Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
-} from 'sequelize-typescript';
+import { Column, Model, Table } from 'sequelize-typescript';
 @Table({ tableName: 'user', timestamps: true })
 export class User extends Model<User> {
   @Column({ primaryKey: true, autoIncrement: true })
@@ -28,16 +21,4 @@ export class User extends Model<User> {
 
   @Column
   phone: string;
-
-  @CreatedAt
-  @Column
-  register_time: Date;
-
-  @UpdatedAt
-  @Column
-  update_time: Date;
-
-  @DeletedAt
-  @Column
-  delete_time: Date;
 }

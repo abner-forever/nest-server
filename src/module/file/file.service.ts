@@ -27,14 +27,14 @@ export class FileService {
   findByOriginName(originalname: string) {
     return this.fileModel.findOne({
       where: {
-        origin_name: originalname,
+        originName: originalname,
       },
     });
   }
   findDel() {
     return this.fileModel.findAll({
       where: {
-        deleted_time: {
+        deletedAt: {
           [Op.not]: null, // 使用 Op.not 运算符表示不为空
         },
       },
@@ -74,7 +74,7 @@ export class FileService {
           const savedFile = await this.create({
             filename: filename,
             path: `/uploads/${type}/${filename}`,
-            origin_name: file.originalname,
+            originName: file.originalname,
             type,
           });
           resolve({ url: `/api/files/${savedFile.filename}` });

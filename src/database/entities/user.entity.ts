@@ -18,12 +18,12 @@ export class UserEntity {
   @IsPhoneNumber()
   phone: string;
 
-  register_time: Date;
+  registerTime: Date;
 
-  update_time: Date;
+  updateTime: Date;
 
   @Exclude()
-  delete_time: Date;
+  deleteTime: Date;
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

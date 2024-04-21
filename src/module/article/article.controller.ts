@@ -32,7 +32,7 @@ export class ArticleController {
     }); // 调用文章服务的 findWithPagination 方法进行分页查询
   }
   @Public()
-  @Get('deatil/:id')
+  @Get('detail/:id')
   async getArticleDetail(@Param('id') id: string) {
     return this.articleService.findById(+id);
   }
@@ -54,7 +54,7 @@ export class ArticleController {
   async addArticle(@Req() req, @Body() article: CreateArticleDto) {
     return this.articleService.create({
       ...article,
-      author_id: req.user.userId,
+      authorId: req.user.userId,
     });
   }
   @Post('update')

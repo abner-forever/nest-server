@@ -36,7 +36,7 @@ export class ArticleService {
     };
 
     if (userId) {
-      options.where = { author_id: userId };
+      options.where = { authorId: userId };
     }
     // 关联查询用户表，并获取关联的用户名信息
     options.include = [{ model: User, attributes: ['username'] }];
@@ -64,8 +64,9 @@ export class ArticleService {
       },
       include: { model: User, attributes: ['username'] },
     });
+    if (!data) return null;
     return {
-      ...data.toJSON(),
+      ...data?.toJSON(),
       user: undefined,
       author: data.user.username,
     };

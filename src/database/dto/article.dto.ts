@@ -4,7 +4,7 @@ export class CreateArticleDto {
   title: string;
   description: string;
   content: string;
-  author_id: number;
+  authorId: number;
 }
 
 export class UpdateArticleDto extends PartialType(CreateArticleDto) {

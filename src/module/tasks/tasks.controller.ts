@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTasksDto, UpdateTaskDto } from 'src/database/dto/tasks.dto';
-import { convertObjectKeysToSnakeCase } from 'src/utils';
 import Email from 'src/utils/email';
 
 @Controller('task')
@@ -45,7 +44,8 @@ export class TasksController {
       if (hasTask) return Promise.reject(Error('今日已打卡, 请勿重复提交'));
     }
     return this.tasksService.create({
-      ...convertObjectKeysToSnakeCase({ ...tasks, userId }),
+      ...tasks,
+      userId,
     });
   }
   @Post('update')
@@ -54,7 +54,7 @@ export class TasksController {
     try {
       return this.tasksService.update({
         ...tasks,
-        user_id: req.user.userId,
+        userId: req.user.userId,
       });
     } catch (error) {
       console.error('error', error);
