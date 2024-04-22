@@ -27,21 +27,21 @@ export const authcodeEmail = (params: AuthcodeEmailParams) => {
  * 锻炼邮件模板
  */
 export const exerciseEmail = ({ questionUrl, today, workouts }) => {
-  return `<div class="container" style="background: linear-gradient(135deg, #65d3ff, #7dffa6); border-radius: 8px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); padding: 20px; max-width: 500px; margin: 20px auto;">
+  return `<div class="container" style="background: #00b8a9; border-radius: 8px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); padding: 20px; max-width: 500px; margin: 20px auto;">
   <div class="header" style="text-align: center; margin-bottom: 20px;">
-    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Hi！今天运动了吗？</h1>
+    <h1 style="color: #f9f7f7; margin: 0; font-size: 24px;">Hi！今天运动了吗？</h1>
   </div>
-  <div class="desc" style="font-size: 18px; color: #ffffff; margin-bottom: 20px;">
+  <div class="desc" style="font-size: 18px; color: #f9f7f7; margin-bottom: 20px;">
     <p>快来和我一起保持健康的生活习惯！</p>
   </div>
-  <div class="content" style="font-size: 16px; color: #ffffff; margin-bottom: 20px;">
-    <p>今天的锻炼推荐：</p>
+  <div class="content" style="font-size: 16px; color: #f9f7f7; margin-bottom: 20px;">
+    <p>今日锻炼推荐：</p>
     <ul>
       ${workouts}
     </ul>
   </div>
   <div class="action" style="text-align: center; margin-top: 30px;">
-    <p><a href=${questionUrl} style="color: #ffffff; text-decoration: none; background-color: #ff847c; padding: 10px 20px; border-radius: 25px;">立即打卡</a></p>
+    <p><a href=${questionUrl} style="color: #ffffff; text-decoration: none; background-color: #f6416c; padding: 10px 20px; border-radius: 25px;">立即打卡</a></p>
   </div>
   <div class="date" style="font-size: 14px; color: #ffffff; text-align: right; margin-top: 20px;">${today}</div>
 </div>`;

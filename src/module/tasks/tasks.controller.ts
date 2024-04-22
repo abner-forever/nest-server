@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -31,6 +32,18 @@ export class TasksController {
       pageNum: +pageNum,
       pageSize: +pageSize,
       type,
+      userId: req.user.userId,
+    });
+  }
+  @Get('/todolistByMonth')
+  getTodoListByMonth(
+    @Req() req,
+    @Query('year') year: string, // 请求年
+    @Query('month') month: string, // 请求月份
+  ) {
+    return this.tasksService.getTodoListByMonth({
+      year,
+      month,
       userId: req.user.userId,
     });
   }
@@ -66,7 +79,7 @@ export class TasksController {
       console.error('error', error);
     }
   }
-  @Post('delete')
+  @Delete('delete')
   @UseInterceptors(ClassSerializerInterceptor)
   async deleteTask(@Body() tasks: UpdateTaskDto) {
     try {

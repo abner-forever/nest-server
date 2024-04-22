@@ -32,6 +32,7 @@ export class FileController {
   @Post('upload/:type')
   @UseInterceptors(FileInterceptor('file', { dest: tempDir }))
   async uploadFile(@UploadedFile() file, @Param('type') type: string) {
+    console.log('file', tempDir);
     if (!file) {
       throw new NotAcceptableException('file not upload');
     }
@@ -39,7 +40,7 @@ export class FileController {
     const existingFile = await this.fileService.findByOriginName(
       file.originalname || file.name,
     );
-    if (existingFile) {
+    if (existingFile && process.env.NODE_ENV === 'production') {
       await fs.promises.unlink(file.path); // 删除临时文件
       // 如果文件已存在于数据库中，则返回已有文件的地址
       return Promise.resolve({

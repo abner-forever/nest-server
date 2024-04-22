@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { jujinCheckIn } from './juejinSign';
+import { jujinCheckIn } from '../../utils/juejinSign';
 import { FileService } from 'src/module/file/file.service';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import nodeMailer from 'nodemailer';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-import { FindOptions } from 'sequelize';
+import { FindOptions, Op } from 'sequelize';
 import { User } from 'src/database/models/user';
 import { Tasks } from 'src/database/models/tasks';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateTasksDto, UpdateTaskDto } from 'src/database/dto/tasks.dto';
 import { exerciseEmail } from 'src/template/email';
-import { Op } from 'sequelize';
+import { startOfMonth, endOfMonth, parse } from 'date-fns';
 
 dayjs.locale('zh-cn');
 
@@ -60,7 +60,7 @@ export class TasksService {
     };
 
     if (userId) {
-      options.where = { user_id: userId, type: type || null };
+      options.where = { userId: userId, type: type || null };
     }
     // 关联查询用户表，并获取关联的用户名信息
     options.include = [{ model: User, attributes: ['username'] }];
@@ -73,7 +73,7 @@ export class TasksService {
       author: item.user.username, // 将作者信息从嵌套结构中提取出来
       user: undefined,
     }));
-    return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count }; // 返回带有页码相关信息的响应数据
+    return { list, pageNum, pageSize, totalPages, hasNextPage, totals: count };
   }
   async getTask({ type, userId }) {
     const today = new Date();
@@ -97,6 +97,25 @@ export class TasksService {
     });
     return result;
   }
+  async getTodoListByMonth({ year, month, userId }) {
+    // 构建查询的日期范围
+    const dateString = `${year}-${month}`;
+    const startDate = startOfMonth(parse(dateString, 'yyyy-MM', new Date()));
+    const endDate = endOfMonth(parse(dateString, 'yyyy-MM', new Date()));
+    // 构建查询选项
+    const options: FindOptions = {
+      include: [], // 添加 include 选项用于关联查询
+      where: {
+        userId,
+        createTime: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    };
+
+    // 执行数据库查询并返回结果
+    return await this.tasksModel.findAll(options);
+  }
   // 创建任务
   async create(createTasksDto: CreateTasksDto) {
     await this.tasksModel.create(createTasksDto);
@@ -106,7 +125,6 @@ export class TasksService {
   async update(updateTaskDto: UpdateTaskDto) {
     await this.tasksModel.update(updateTaskDto, {
       where: {
-        // 更新条件，例如：id
         id: updateTaskDto.id,
       },
     });
@@ -119,6 +137,7 @@ export class TasksService {
         id,
       },
     });
+    return true;
   }
 
   @Cron('0 0 10 * * *') // 掘金签到每天上午10点
@@ -132,9 +151,8 @@ export class TasksService {
     const today = dayjs().format('YYYY-MM-DD dddd');
     const dayOfWeek = dayjs().day();
     const workouts = workoutsList[dayOfWeek];
-    console.log('workouts', workouts);
     // 问卷地址
-    const questionUrl = 'https://f.wps.cn/g/hpDgagG6';
+    const questionUrl = 'http://foreverheart.top/user/exercise/checkIn';
     // 发送邮件的对象
     const users = [process.env.EMAIL_ADDRESS, process.env.EMAIL_ADDRESS_JIA];
     const content = exerciseEmail({ today, questionUrl, workouts });
