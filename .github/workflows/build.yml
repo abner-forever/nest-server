@@ -21,7 +21,7 @@ jobs:
         with:
           host: ${{ secrets.TG_HOST }}
           username: ${{ secrets.TG_USER }}
-          password: ${{ secrets.TG_PASS }}
+          key: ${{ secrets.TG_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
           source: './'
           target: /www/blog-server/
@@ -31,7 +31,7 @@ jobs:
         with:
           host: ${{ secrets.TG_HOST }}
           username: ${{ secrets.TG_USER }}
-          password: ${{ secrets.TG_PASS }}
+          key: ${{ secrets.TG_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             cd /www/blog-server
