@@ -43,13 +43,12 @@ export class AuthController {
   @Public()
   @Post('authCode') // 发送验证码
   authCode(@Body() { email }: SendEmailParams) {
-    const code = this.authService.generateVerificationCode();
-    this.authService.storeVerificationCode(email, code);
+    const code = this.authService.generateVerificationCode(email);
     const today = dayjs().format('YYYY-MM-DD dddd');
     // 问卷地址
     const options = {
       date: today,
-      code: String(code),
+      code: code,
     };
     const message = authcodeEmail(options);
     // 发送邮件的对象

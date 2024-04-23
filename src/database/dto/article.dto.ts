@@ -9,6 +9,7 @@ export class CreateArticleDto {
 
 export class UpdateArticleDto extends PartialType(CreateArticleDto) {
   id: number;
+  viewCount?: number;
 }
 export class ListParams {
   pageNum?: number;

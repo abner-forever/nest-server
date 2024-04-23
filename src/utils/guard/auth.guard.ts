@@ -22,19 +22,19 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    if (!token) {
-      throw new UnauthorizedException();
-    }
     try {
+      if (!token) {
+        throw new UnauthorizedException({ message: '用户未登录' });
+      }
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
       // 💡 在这里我们将 payload 挂载到请求对象上 以便我们可以在路由处理器中访问它
       request['user'] = payload;
     } catch (error) {
+      if (isPublic) return true;
       throw new UnauthorizedException({ message: error.message });
     }
     return true;

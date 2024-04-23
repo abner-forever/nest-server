@@ -33,8 +33,9 @@ export class ArticleController {
   }
   @Public()
   @Get('detail/:id')
-  async getArticleDetail(@Param('id') id: string) {
-    return this.articleService.findById(+id);
+  @UseInterceptors(ClassSerializerInterceptor)
+  async detail(@Req() req, @Param('id') id: string) {
+    return this.articleService.findById(+id, req?.user?.userId);
   }
   @Get('my')
   @UseInterceptors(ClassSerializerInterceptor)
@@ -51,7 +52,7 @@ export class ArticleController {
   }
   @Post('add')
   @UseInterceptors(ClassSerializerInterceptor)
-  async addArticle(@Req() req, @Body() article: CreateArticleDto) {
+  async add(@Req() req, @Body() article: CreateArticleDto) {
     return this.articleService.create({
       ...article,
       authorId: req.user.userId,
@@ -59,12 +60,12 @@ export class ArticleController {
   }
   @Post('update')
   @UseInterceptors(ClassSerializerInterceptor)
-  async updateArticle(@Body() article: UpdateArticleDto) {
+  async update(@Body() article: UpdateArticleDto) {
     return this.articleService.update(article);
   }
   @Delete()
   @UseInterceptors(ClassSerializerInterceptor)
-  async deleteArticle(@Body() { id }) {
+  async remove(@Body() { id }) {
     return this.articleService.delete(id);
   }
 }
