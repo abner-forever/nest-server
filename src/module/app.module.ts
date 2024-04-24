@@ -10,11 +10,11 @@ import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { RolesGuard } from '../utils/guard/roles.guard';
 import { ArticleModule } from './article/article.module';
-import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FileModule } from './file/file.module';
 import { TaskModule } from './tasks/tasks.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   imports: [
@@ -24,7 +24,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
         port: 6379,
       },
     }),
-    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -55,6 +54,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     ArticleModule,
     ScheduleModule.forRoot(),
     TaskModule,
+    CalendarModule,
   ],
   controllers: [],
   providers: [
