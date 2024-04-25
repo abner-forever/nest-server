@@ -13,17 +13,17 @@ export class CalendarService {
     private readonly httpService: HttpService,
     @InjectRedis() private readonly redis: Redis,
   ) {}
-
-  async findWeekends(
+  /** 查询工作日 */
+  async findWorkdays(
     year: string,
   ): Promise<Observable<AxiosResponse<any, any>>> {
-    const cacheWeekends = await this.redis.get(`weekends_${year}`);
-    if (cacheWeekends) {
-      return Promise.resolve(JSON.parse(cacheWeekends));
+    const cacheWorkdays = await this.redis.get(`workdays_${year}`);
+    if (cacheWorkdays) {
+      return Promise.resolve(JSON.parse(cacheWorkdays));
     }
     const { data } = await firstValueFrom(
       this.httpService
-        .get<any>(`https://api.jiejiariapi.com/v1/weekends/${year}`)
+        .get<any>(`https://api.jiejiariapi.com/v1/workdays/${year}`)
         .pipe(
           catchError((error: AxiosError) => {
             this.logger.error(error.response.data);
@@ -32,7 +32,33 @@ export class CalendarService {
         ),
     );
     this.redis.set(
-      `weekends_${year}`,
+      `workdays_${year}`,
+      JSON.stringify(data),
+      'EX',
+      60 * 60 * 24 * 30,
+    );
+    return data;
+  }
+  /** 查询节假日 */
+  async findHolidays(
+    year: string,
+  ): Promise<Observable<AxiosResponse<any, any>>> {
+    const cacheHolidays = await this.redis.get(`holidays_${year}`);
+    if (cacheHolidays) {
+      return Promise.resolve(JSON.parse(cacheHolidays));
+    }
+    const { data } = await firstValueFrom(
+      this.httpService
+        .get<any>(`https://api.jiejiariapi.com/v1/holidays/${year}`)
+        .pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(error.response.data);
+            throw 'An error happened!';
+          }),
+        ),
+    );
+    this.redis.set(
+      `holidays_${year}`,
       JSON.stringify(data),
       'EX',
       60 * 60 * 24 * 30,

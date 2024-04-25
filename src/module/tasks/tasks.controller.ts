@@ -21,7 +21,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {
     this.email = new Email();
   }
-  @Get('/todolist')
+  @Get('/list')
   getTodoList(
     @Req() req,
     @Query('pageNum') pageNum: number = 1, // 默认页码为 1
@@ -35,15 +35,17 @@ export class TasksController {
       userId: req.user.userId,
     });
   }
-  @Get('/todolistByMonth')
+  @Get('/listByMonth')
   getTodoListByMonth(
     @Req() req,
     @Query('year') year: string, // 请求年
     @Query('month') month: string, // 请求月份
+    @Query('type') type: string, //任务类型
   ) {
     return this.tasksService.getTodoListByMonth({
       year,
       month,
+      type,
       userId: req.user.userId,
     });
   }

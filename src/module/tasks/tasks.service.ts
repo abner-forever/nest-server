@@ -97,7 +97,7 @@ export class TasksService {
     });
     return result;
   }
-  async getTodoListByMonth({ year, month, userId }) {
+  async getTodoListByMonth({ year, month, userId, type }) {
     // 构建查询的日期范围
     const dateString = `${year}-${month}`;
     const startDate = startOfMonth(parse(dateString, 'yyyy-MM', new Date()));
@@ -107,6 +107,7 @@ export class TasksService {
       include: [], // 添加 include 选项用于关联查询
       where: {
         userId,
+        type,
         createTime: {
           [Op.between]: [startDate, endDate],
         },
@@ -128,7 +129,7 @@ export class TasksService {
         id: updateTaskDto.id,
       },
     });
-    return null;
+    return true;
   }
 
   async delete(id: number) {

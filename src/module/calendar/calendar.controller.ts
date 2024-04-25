@@ -7,9 +7,15 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Public()
-  @Get('weekends/:year')
-  async getWeekends(@Param('year') year: string) {
+  @Get('workdays/:year')
+  async getWorkdays(@Param('year') year: string) {
     if (!year) return null;
-    return this.calendarService.findWeekends(year);
+    return this.calendarService.findWorkdays(year);
+  }
+  @Public()
+  @Get('holidays/:year')
+  async getHolidays(@Param('year') year: string) {
+    if (!year) return null;
+    return this.calendarService.findHolidays(year);
   }
 }
