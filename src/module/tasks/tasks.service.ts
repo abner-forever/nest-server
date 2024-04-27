@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { jujinCheckIn } from '../../utils/juejinSign';
 import { FileService } from 'src/module/file/file.service';
 import { promises as fs } from 'fs';
@@ -12,8 +12,11 @@ import { User } from 'src/database/models/user';
 import { Tasks } from 'src/database/models/tasks';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateTasksDto, UpdateTaskDto } from 'src/database/dto/tasks.dto';
-import { exerciseEmail } from 'src/template/email';
+import { exerciseEmail, todoEmail } from 'src/template/email';
 import { startOfMonth, endOfMonth, parse } from 'date-fns';
+import { CronJob } from 'cron';
+import Redis from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 dayjs.locale('zh-cn');
 
@@ -26,6 +29,14 @@ export const workoutsList = {
   5: ['踢踏舞', '游泳', '户外跑步'],
   6: ['拉伸放松', '拳击有氧操', '自行车训练'],
 };
+
+interface AddCronJodParams {
+  name: string;
+  cronTime: Date | string;
+  isInit?: boolean;
+  callback?: () => void;
+}
+
 @Injectable()
 export class TasksService {
   emailConfig: {
@@ -39,6 +50,8 @@ export class TasksService {
     private readonly fileService: FileService,
     @InjectModel(Tasks)
     private readonly tasksModel: typeof Tasks,
+    private schedulerRegistry: SchedulerRegistry,
+    @InjectRedis() private readonly redis: Redis,
   ) {
     this.emailConfig = {
       cookie: process.env.JUEJIN_TOEKN,
@@ -47,8 +60,41 @@ export class TasksService {
       to: [process.env.EMAIL_ADDRESS],
       pass: process.env.EMAIL_ADDRESS_PASS,
     };
+    this.initCornjob();
   }
   private readonly logger = new Logger(TasksService.name);
+
+  async initCornjob() {
+    const result = await this.redis.hgetall('cornjob');
+    Object.keys(result).forEach((key) => {
+      const {
+        email,
+        title,
+        description = '',
+        cronTime,
+        username,
+      } = JSON.parse(result[key]);
+      this.addCronJob({
+        name: key,
+        isInit: true,
+        cronTime: new Date(cronTime),
+        callback: () => {
+          const emailContent = todoEmail({
+            title,
+            description,
+            endTime: dayjs(cronTime).format('YYYY-MM-DD hh:mm'),
+            username,
+          });
+          this.redis.hdel('cornjob', key);
+          this.sendEmail({
+            users: [email],
+            title: '待办提醒',
+            content: emailContent,
+          });
+        },
+      });
+    });
+  }
 
   async getTodoList({ pageNum = 1, pageSize = 10, userId, type }) {
     const offset = (pageNum - 1) * pageSize; // 计算偏移量
@@ -119,6 +165,41 @@ export class TasksService {
   }
   // 创建任务
   async create(createTasksDto: CreateTasksDto) {
+    if (createTasksDto.emailNotification) {
+      const { userId, username, title, notificationTime, email, description } =
+        createTasksDto;
+      const cronName = `notification_${userId}_${title}_${notificationTime}`;
+      const cronTime = new Date(notificationTime);
+      this.addCronJob({
+        name: cronName,
+        cronTime,
+        callback: () => {
+          this.redis.hdel('cornjob', cronName);
+          const emailContent = todoEmail({
+            title,
+            description,
+            endTime: dayjs(notificationTime).format('YYYY-MM-DD hh:mm'),
+            username,
+          });
+          this.sendEmail({
+            users: [createTasksDto.email],
+            title: '待办提醒',
+            content: emailContent,
+          });
+        },
+      });
+      this.redis.hset(
+        'cornjob',
+        cronName,
+        JSON.stringify({
+          cronTime: notificationTime,
+          title: title,
+          email: email,
+          description: description,
+          username,
+        }),
+      );
+    }
     await this.tasksModel.create(createTasksDto);
     return true;
   }
@@ -133,6 +214,14 @@ export class TasksService {
   }
 
   async delete(id: number) {
+    const result = await this.tasksModel.findOne({
+      where: { id },
+    });
+    if (!result) return '不存在';
+    const { emailNotification, userId, title, notificationTime } = result;
+    if (emailNotification && notificationTime) {
+      this.deleteCron(`notification_${userId}_${title}_${notificationTime}`);
+    }
     await this.tasksModel.destroy({
       where: {
         id,
@@ -236,5 +325,45 @@ export class TasksService {
     users.forEach((item) => {
       send({ user: item, title, content });
     });
+  }
+  /**
+   * 添加定时任务
+   */
+  addCronJob({ name, cronTime, callback, isInit }: AddCronJodParams) {
+    if (cronTime instanceof Date) {
+      const isSmallNow = Date.now() - cronTime.getTime() > 0;
+      if (isSmallNow) {
+        if (isInit) {
+          this.logger.error('设定时间小于当前时间，请重新设置', name, cronTime);
+          return;
+        } else {
+          console.log('isInit', isInit);
+          throw new BadRequestException('设定时间小于当前时间，请重新设置');
+        }
+      }
+    }
+    try {
+      const job = new CronJob(cronTime, () => {
+        callback?.();
+      });
+      this.schedulerRegistry.addCronJob(name, job);
+      job.start();
+      this.logger.warn(`Job ${name} added with Cron expression: ${cronTime}`);
+    } catch (error: any) {
+      throw new BadRequestException(error.message);
+    }
+  }
+  /**
+   * 删除定时任务
+   * @param name
+   */
+  deleteCron(name: string) {
+    try {
+      this.schedulerRegistry.deleteCronJob(name);
+      this.redis.hdel('cornjob', name);
+      this.logger.warn(`job ${name} deleted!`);
+    } catch (error) {
+      console.error('error', error.message);
+    }
   }
 }

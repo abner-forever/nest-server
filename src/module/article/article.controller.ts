@@ -13,6 +13,7 @@ import {
 import { ArticleService } from './article.service';
 import {
   CreateArticleDto,
+  ListParams,
   UpdateArticleDto,
 } from 'src/database/dto/article.dto';
 import { Public } from 'src/utils/decorator/auth.decorator';
@@ -22,14 +23,8 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
   @Public()
   @Get()
-  async getArticleList(
-    @Query('pageNum') pageNum: number = 1, // 默认页码为 1
-    @Query('pageSize') pageSize: number = 10, // 默认每页数量为 10
-  ) {
-    return this.articleService.getArticleList({
-      pageNum: +pageNum,
-      pageSize: +pageSize,
-    }); // 调用文章服务的 findWithPagination 方法进行分页查询
+  async getArticleList(@Query() query: ListParams) {
+    return this.articleService.getArticleList(query); // 调用文章服务的 findWithPagination 方法进行分页查询
   }
   @Public()
   @Get('detail/:id')
@@ -52,9 +47,9 @@ export class ArticleController {
   }
   @Post('add')
   @UseInterceptors(ClassSerializerInterceptor)
-  async add(@Req() req, @Body() article: CreateArticleDto) {
+  async add(@Req() req, @Body() createArticleDto: CreateArticleDto) {
     return this.articleService.create({
-      ...article,
+      ...createArticleDto,
       authorId: req.user.userId,
     });
   }

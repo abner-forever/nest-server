@@ -14,11 +14,15 @@ import {
 import { TasksService } from './tasks.service';
 import { CreateTasksDto, UpdateTaskDto } from 'src/database/dto/tasks.dto';
 import Email from 'src/utils/email';
+import { UsersService } from '../users/users.service';
 
 @Controller('task')
 export class TasksController {
   email: Email;
-  constructor(private readonly tasksService: TasksService) {
+  constructor(
+    private readonly tasksService: TasksService,
+    private readonly usersService: UsersService,
+  ) {
     this.email = new Email();
   }
   @Get('/list')
@@ -52,7 +56,7 @@ export class TasksController {
   @Post('add')
   @UseInterceptors(ClassSerializerInterceptor)
   async addTasks(@Req() req, @Body() tasks: CreateTasksDto) {
-    const { userId } = req.user;
+    const { userId, email } = req.user;
     if (tasks.type === 'exercise') {
       const hasTask = await this.tasksService.getTask({
         type: tasks.type,
@@ -64,9 +68,13 @@ export class TasksController {
           HttpStatus.BAD_REQUEST,
         );
     }
+    const { username } = await this.usersService.findById(userId);
+    console.log('req.user', username);
     return this.tasksService.create({
       ...tasks,
       userId,
+      email,
+      username,
     });
   }
   @Post('update')

@@ -4,8 +4,9 @@ import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Tasks } from '../../database/models/tasks';
+import { UsersModule } from '../users/users.module';
 @Module({
-  imports: [FileModule, SequelizeModule.forFeature([Tasks])],
+  imports: [FileModule, UsersModule, SequelizeModule.forFeature([Tasks])],
   controllers: [TasksController],
   providers: [TasksService],
 })

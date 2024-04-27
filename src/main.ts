@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './module/app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 import { HttpExceptionFilter } from './utils/filter/http-exception.filter';
 import { ValidationPipe } from './utils/pipe/validation';
 import cookieParser from 'cookie-parser';
@@ -23,8 +27,12 @@ async function main() {
     .setTitle('blog api')
     .setDescription('我的博客接口文档')
     .setVersion('1.0')
+    .addTag('blogs')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const options: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+  };
+  const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('apis/doc', app, document);
   await app.listen(8080);
   if (module.hot) {
