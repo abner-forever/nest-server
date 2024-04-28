@@ -56,7 +56,7 @@ export class TasksController {
   @Post('add')
   @UseInterceptors(ClassSerializerInterceptor)
   async addTasks(@Req() req, @Body() tasks: CreateTasksDto) {
-    const { userId, email } = req.user;
+    const { userId } = req.user;
     if (tasks.type === 'exercise') {
       const hasTask = await this.tasksService.getTask({
         type: tasks.type,
@@ -68,8 +68,7 @@ export class TasksController {
           HttpStatus.BAD_REQUEST,
         );
     }
-    const { username } = await this.usersService.findById(userId);
-    console.log('req.user', username);
+    const { username, email } = await this.usersService.findById(userId);
     return this.tasksService.create({
       ...tasks,
       userId,

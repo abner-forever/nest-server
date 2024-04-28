@@ -52,7 +52,7 @@ export const todoEmail = ({ title, description, endTime, username }) => {
   <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
   <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
     <h1 style="color: #333333;">[待办提醒] 完成报告撰写任务</h1>
-    <p style="color: #666666; line-height: 1.6;">亲爱的[${username}]，</p>
+    <p style="color: #666666; line-height: 1.6;">亲爱的 ${username}</p>
     <p style="color: #666666; line-height: 1.6;">您有一个待办事项需要及时处理，请查看详情并尽快完成：</p>
     <ul style="color: #666666; line-height: 1.6;">
       <li><strong>标题：</strong> ${title}</li>
@@ -61,7 +61,6 @@ export const todoEmail = ({ title, description, endTime, username }) => {
     </ul>
     <p style="color: #666666; line-height: 1.6;">请点击下面的按钮查看详情并完成待办事项：</p>
     <a href="http://foreverheart.top/todo" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">查看待办事项</a>
-    <p style="color: #666666; line-height: 1.6;">[${username}]</p>
   </div>
 </body>`;
 };
