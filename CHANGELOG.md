@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/abner-forever/nest-server/compare/v1.0.1...v1.1.0) (2024-04-28)
+
+
+### Bug Fixes
+
+* 优化任务数据查询 ([8d8aafb](https://github.com/abner-forever/nest-server/commit/8d8aafb4b79569849941a7bec6b3839b85f6b77e))
+* 节假日查询 ([f7563de](https://github.com/abner-forever/nest-server/commit/f7563de5e743b5552935e3498626f36f6d7b8af1))
+
+
+### Features
+
+* 待办任务支持邮件通知 ([6190baf](https://github.com/abner-forever/nest-server/commit/6190baf6ef7cf70e35783e12b49edda7ffd62360))
+* 添加周六日接口 ([5b4bb9f](https://github.com/abner-forever/nest-server/commit/5b4bb9f3a34858ea07a3f441519e6ac732cef47a))
+* 添加阅读数据计数 ([29937d3](https://github.com/abner-forever/nest-server/commit/29937d3ebd42b2a12307e768051d23691ab5cc03))
+
 ## [1.0.1](https://github.com/abner-forever/nest-server/compare/v1.0.0...v1.0.1) (2024-04-21)
 
 
