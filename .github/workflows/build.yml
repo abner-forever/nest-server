@@ -16,12 +16,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npx pnpm i
-          npm run release
       - name: Copy files to server
         uses: appleboy/scp-action@master
         with:
@@ -44,3 +38,9 @@ jobs:
             npx pnpm install
             npm run build
             npm run pm2 
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx pnpm i
+          npm run release
