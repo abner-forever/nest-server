@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/abner-forever/nest-server/compare/v1.1.0...v1.1.1) (2024-04-28)
+
+
+### Bug Fixes
+
+* 修改email取值 ([ef998d0](https://github.com/abner-forever/nest-server/commit/ef998d0a9c329d74614574d2d25fdc45776a9e9e))
+
 # [1.1.0](https://github.com/abner-forever/nest-server/compare/v1.0.1...v1.1.0) (2024-04-28)
 
 
