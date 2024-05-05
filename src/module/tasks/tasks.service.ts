@@ -150,15 +150,16 @@ export class TasksService {
     const endDate = endOfMonth(parse(dateString, 'yyyy-MM', new Date()));
     // 构建查询选项
     const options: FindOptions = {
-      include: [], // 添加 include 选项用于关联查询
       where: {
         userId,
-        type,
         createTime: {
           [Op.between]: [startDate, endDate],
         },
       },
     };
+    if (type) {
+      options.where['type'] = type;
+    }
 
     // 执行数据库查询并返回结果
     return await this.tasksModel.findAll(options);
