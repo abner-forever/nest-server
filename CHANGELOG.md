@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/abner-forever/nest-server/compare/v1.1.1...v1.1.2) (2024-05-05)
+
+
+### Bug Fixes
+
+* 兼容任务查询 ([c858328](https://github.com/abner-forever/nest-server/commit/c85832889f6313ff97e3d760e912e6584ba2f5cd))
+
 ## [1.1.1](https://github.com/abner-forever/nest-server/compare/v1.1.0...v1.1.1) (2024-04-28)
 
 
